@@ -25,9 +25,9 @@ jobs:
             -D TDESKTOP_API_HASH=${{ secrets.API_HASH || 'b18441a1ff607e10a989891a5462e627' }}
 
       - name: Strip binary
-        run: strip out/Release/Telegram || true
+        run: strip out/Release/AyuGram || true
 
       - uses: actions/upload-artifact@v4
         with:
           name: AyuGram-Linux
-          path: out/Release/Telegram
+          path: out/Release/AyuGram
