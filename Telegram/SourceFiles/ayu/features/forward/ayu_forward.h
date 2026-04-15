@@ -49,4 +49,9 @@ void forwardMessages(
 	bool forwardState,
 	const Data::ResolvedForwardDraft &draft);
 
+void stealthForwardMessages(
+	not_null<Main::Session*> session,
+	const Api::SendAction &action,
+	const Data::ResolvedForwardDraft &draft);
+
 }

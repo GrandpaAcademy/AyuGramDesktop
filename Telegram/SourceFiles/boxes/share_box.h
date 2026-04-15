@@ -68,6 +68,7 @@ struct ShareBoxStyleOverrides {
 	const style::InputField *label = nullptr;
 	const style::Checkbox *checkbox = nullptr;
 	std::shared_ptr<HistoryView::ScheduleBoxStyleArgs> scheduleBox;
+	bool stealthForward = false;
 };
 [[nodiscard]] ShareBoxStyleOverrides DarkShareBoxStyle();
 
@@ -114,7 +115,8 @@ public:
 		std::shared_ptr<Ui::Show> show,
 		not_null<History*> history,
 		MessageIdsList msgIds,
-		std::optional<TimeId> videoTimestamp = {});
+		std::optional<TimeId> videoTimestamp = {},
+		bool stealthForward = false);
 
 	struct Descriptor {
 		not_null<Main::Session*> session;

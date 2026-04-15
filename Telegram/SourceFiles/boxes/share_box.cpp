@@ -1684,7 +1684,8 @@ ShareBox::SubmitCallback ShareBox::DefaultForwardCallback(
 		std::shared_ptr<Ui::Show> show,
 		not_null<History*> history,
 		MessageIdsList msgIds,
-		std::optional<TimeId> videoTimestamp) {
+		std::optional<TimeId> videoTimestamp,
+		bool stealthForward) {
 	struct State final {
 		base::flat_set<mtpRequestId> requests;
 		mtpRequestId nextRequestKey = 0;
@@ -1753,6 +1754,20 @@ ShareBox::SubmitCallback ShareBox::DefaultForwardCallback(
 				show->hideLayer();
 			}
 		};
+
+		if (stealthForward) {
+			crl::async([=]{
+				for (const auto thread : result) {
+					AyuForward::stealthForwardMessages(
+						&history->owner().session(),
+						Api::SendAction(thread, options),
+						Data::ResolvedForwardDraft(items, forwardOptions));
+				}
+			});
+
+			dismiss();
+			return;
+		}
 
 		if (AyuForward::isFullAyuForwardNeeded(items.front())) {
 			crl::async([=]{
@@ -2052,7 +2067,9 @@ void FastShareMessage(
 		.submitCallback = ShareBox::DefaultForwardCallback(
 			show,
 			history,
-			msgIds),
+			msgIds,
+			{},
+			st.stealthForward),
 		.filterCallback = std::move(filterCallback),
 		.st = st,
 		.forwardOptions = {

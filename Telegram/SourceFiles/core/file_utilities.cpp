@@ -173,11 +173,17 @@ QString DefaultDownloadPath(not_null<Main::Session*> session) {
 	if (!Core::App().canReadDefaultDownloadPath()) {
 		return session->local().tempDirectory();
 	}
+#ifdef Q_OS_LINUX
+	return QStandardPaths::writableLocation(
+		QStandardPaths::DownloadLocation)
+		+ u"/ayugram/"_q;
+#else
 	return QStandardPaths::writableLocation(
 		QStandardPaths::DownloadLocation)
 		+ '/'
 		+ DefaultDownloadPathFolder(session)
 		+ '/';
+#endif
 }
 
 namespace internal {

@@ -435,4 +435,11 @@ void forwardMessages(
 	state->updateBottomBar(*session, &peer->id, ForwardState::State::Finished);
 }
 
+void stealthForwardMessages(
+		not_null<Main::Session*> session,
+		const Api::SendAction &action,
+		const Data::ResolvedForwardDraft &draft) {
+	forwardMessages(session, action, false, draft);
+}
+
 } // namespace AyuFeatures::AyuForward
