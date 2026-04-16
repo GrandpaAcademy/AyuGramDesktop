@@ -1463,6 +1463,18 @@ void FillContextMenuItems(
 				}, &st::menuIconCopy);
 			}
 
+			if (!list->hasCopyRestriction(view->data())) {
+				const auto asGroup = (request.pointState != PointState::GroupPart);
+				result->addAction(tr::lng_context_copy_markdown(tr::now), [=] {
+					if (const auto item = owner->message(itemId)) {
+						if (!list->showCopyRestriction(item)) {
+							const auto textWithEntities = asGroup ? HistoryGroupText(owner->groups().find(item)).rich : HistoryItemText(item).rich;
+							TextUtilities::SetClipboardText({ AyuUi::TextWithEntitiesToMarkdown(textWithEntities) });
+						}
+					}
+				}, &st::menuIconCopy);
+			}
+
 			const auto translate = mediaHasTextForCopy
 				? (HistoryView::TransribedText(item)
 					.append('\n')

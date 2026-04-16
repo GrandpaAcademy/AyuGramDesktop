@@ -120,6 +120,8 @@ set(ayugram_files
         ayu/utils/ayu_mapper.cpp
         ayu/utils/ayu_mapper.h
         ayu/utils/qt_key_modifiers_extended.h
+        ayu/utils/ayu_text_format.cpp
+        ayu/utils/ayu_text_format.h
         ayu/utils/telegram_helpers.cpp
         ayu/utils/telegram_helpers.h
         ayu/utils/windows_utils.cpp

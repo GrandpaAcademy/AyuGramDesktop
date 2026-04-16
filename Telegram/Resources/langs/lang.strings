@@ -5014,6 +5014,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_context_save_music_folder" = "... Downloads";
 "lng_context_save_music_about" = "Choose where you want this audio to be saved.";
 "lng_context_copy_text" = "Copy Text";
+"lng_context_copy_markdown" = "Copy as Markdown";
 "lng_context_open_gif" = "Open GIF";
 "lng_context_save_gif" = "Add to GIFs";
 "lng_context_delete_gif" = "Delete";
