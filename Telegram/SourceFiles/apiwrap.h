@@ -369,7 +369,8 @@ public:
 		BusinessShortcutId id);
 	void sendMessage(
 		MessageToSend &&message,
-		std::optional<MsgId> localMessageId = std::nullopt);
+		std::optional<MsgId> localMessageId = std::nullopt,
+		bool force = false);
 	void sendBotStart(
 		std::shared_ptr<Ui::Show> show,
 		not_null<UserData*> bot,
@@ -813,5 +814,7 @@ private:
 
 	base::flat_map<FullMsgId, QString> _unlikelyMessageLinks;
 	base::flat_map<FullStoryId, QString> _unlikelyStoryLinks;
+
+	base::weak_ptr_factory<ApiWrap> _weakFactory{ this };
 
 };

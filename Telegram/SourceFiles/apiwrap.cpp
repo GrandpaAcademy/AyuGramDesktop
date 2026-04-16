@@ -4056,8 +4056,54 @@ void ApiWrap::sendShortcutMessages(
 
 void ApiWrap::sendMessage(
 		MessageToSend &&message,
-		std::optional<MsgId> localMessageId) {
+		std::optional<MsgId> localMessageId,
+		bool force) {
 	applyGhostScheduling(_session, message.action.options);
+
+	const auto &settings = AyuSettings::getInstance();
+	if (!force && settings.preventDuplicateMessages() && !message.textWithTags.text.trimmed().isEmpty()) {
+		if (const auto history = message.action.history) {
+			const int kMaxScanItems = 50;
+			const int kMaxRelevantChecks = 15;
+			int scanned = 0;
+			int relevantChecked = 0;
+			bool isDuplicate = false;
+			for (auto it = history->blocks.rbegin(); it != history->blocks.rend() && !isDuplicate; ++it) {
+				const auto &block = *it;
+				for (auto mit = block->messages.rbegin(); mit != block->messages.rend(); ++mit) {
+					const auto item = (*mit)->data();
+					if (item->out() && !item->isService()) {
+						if (item->originalText().text == message.textWithTags.text) {
+							isDuplicate = true;
+							break;
+						}
+						if (++relevantChecked >= kMaxRelevantChecks) break;
+					}
+					if (++scanned >= kMaxScanItems) break;
+				}
+				if (isDuplicate || relevantChecked >= kMaxRelevantChecks || scanned >= kMaxScanItems) break;
+			}
+			if (isDuplicate) {
+				auto show = ShowForPeer(history->peer);
+				if (show) {
+					DEBUG_LOG(("[AyuGram] Duplicate message detected, showing confirmation"));
+					auto weak = base::make_weak(this);
+					show->showBox(Ui::MakeConfirmBox({
+						.text = tr::marked("This message is identical to a recently sent message in this chat.\n\nSend anyway?"),
+						.confirmed = [=, msg = std::move(message)](Fn<void()> close) mutable {
+							close();
+							if (const auto strong = weak.get()) {
+								strong->sendMessage(std::move(msg), localMessageId, true);
+							}
+						},
+						.confirmText = tr::lng_send_button(tr::now),
+					}));
+					return;
+				}
+			}
+		}
+	}
+
 	const auto clearReplyTo = prependPseudoReply(message);
 
 	const auto history = message.action.history;
