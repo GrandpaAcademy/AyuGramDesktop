@@ -117,15 +117,26 @@ void SendProgressManager::send(const Key &key, int progress) {
 		return;
 	}
 
-	// AyuGram sendUploadProgress
+	using Type = SendProgressType;
+
+	// AyuGram ghostTyping and ghostUploading
 	const auto &ghost = AyuSettings::ghost(_session);
-	if (!ghost.sendUploadProgress())
-	{
-		DEBUG_LOG(("[AyuGram] Don't send upload progress"));
+	const auto isUpload = (key.type == Type::UploadVideo)
+		|| (key.type == Type::UploadVoice)
+		|| (key.type == Type::UploadRound)
+		|| (key.type == Type::UploadPhoto)
+		|| (key.type == Type::UploadFile);
+
+	if (isUpload) {
+		if (!ghost.sendUploadProgress()) {
+			DEBUG_LOG(("[AyuGram] Don't send upload progress"));
+			return;
+		}
+	} else if (!ghost.sendTypingProgress()) {
+		DEBUG_LOG(("[AyuGram] Don't send typing progress"));
 		return;
 	}
 
-	using Type = SendProgressType;
 	const auto action = [&]() -> MTPsendMessageAction {
 		const auto p = MTP_int(progress);
 		switch (key.type) {
