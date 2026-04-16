@@ -24,6 +24,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "core/application.h"
 #include "core/mime_type.h"
 #include "core/file_utilities.h"
+#include "base/base_file_utilities.h"
 #include "storage/file_download.h"
 #include "ui/chat/attach/attach_prepare.h"
 
@@ -320,15 +321,15 @@ void DocumentMedia::automaticLoad(
 		const auto finalName = [&] {
 			if (name.isEmpty()) return DocumentFileNameForSave(_owner);
 			if (!name.startsWith(folder)) return name;
-			QString nameStart = name, extension;
+			QString nameStart = name, ext;
 			const auto extPos = name.lastIndexOf('.');
 			if (extPos >= 0) {
 				nameStart = name.mid(0, extPos);
-				extension = name.mid(extPos);
+				ext = name.mid(extPos);
 			}
-			auto result = nameStart + extension;
+			auto result = nameStart + ext;
 			for (int i = 0; QFileInfo::exists(result); ++i) {
-				result = nameStart + u" (%1)"_q.arg(i + 2) + extension;
+				result = nameStart + u" (%1)"_q.arg(i + 2) + ext;
 			}
 			return result;
 		}();
