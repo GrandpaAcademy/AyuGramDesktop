@@ -23,6 +23,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "core/core_settings.h"
 #include "core/application.h"
 #include "core/mime_type.h"
+#include "core/file_utilities.h"
 #include "storage/file_download.h"
 #include "ui/chat/attach/attach_prepare.h"
 
@@ -291,17 +292,8 @@ void DocumentMedia::automaticLoad(
 		return;
 	}
 	const auto toCache = _owner->saveToCache();
-	if (!toCache && !Core::App().canSaveFileWithoutAskingForPath()) {
-		// We need a filename, but we're supposed to ask user for it.
-		// No automatic download in this case.
-		return;
-	}
-	const auto indata = _owner->filename();
-	const auto filename = toCache
-		? QString()
-		: DocumentFileNameForSave(_owner);
-	const auto shouldLoadFromCloud = (indata.isEmpty()
-		|| Core::DetectNameType(indata) != Core::NameType::Executable)
+	const auto shouldLoadFromCloud = (_owner->filename().isEmpty()
+		|| Core::DetectNameType(_owner->filename()) != Core::NameType::Executable)
 		&& (item
 			? Data::AutoDownload::Should(
 				_owner->session().settings().autoDownload(),
@@ -313,6 +305,43 @@ void DocumentMedia::automaticLoad(
 	const auto loadFromCloud = shouldLoadFromCloud
 		? LoadFromCloudOrLocal
 		: LoadFromLocalOnly;
+#ifdef Q_OS_LINUX
+	if (!toCache && item && !_owner->sticker()) {
+		auto mediaType = File::AyuMediaType::Document;
+		if (_owner->isVideoFile() || _owner->isVideoMessage()) {
+			mediaType = File::AyuMediaType::Video;
+		} else if (_owner->isAudioFile() || _owner->isVoiceMessage()) {
+			mediaType = File::AyuMediaType::Audio;
+		}
+		const auto folder = File::AyuMediaPath(&_owner->session(), mediaType);
+		const auto name = _owner->filename().isEmpty()
+			? DocumentFileNameForSave(_owner)
+			: folder + base::FileNameFromUserString(_owner->filename());
+		const auto finalName = [&] {
+			if (name.isEmpty()) return DocumentFileNameForSave(_owner);
+			if (!name.startsWith(folder)) return name;
+			QString nameStart = name, extension;
+			const auto extPos = name.lastIndexOf('.');
+			if (extPos >= 0) {
+				nameStart = name.mid(0, extPos);
+				extension = name.mid(extPos);
+			}
+			auto result = nameStart + extension;
+			for (int i = 0; QFileInfo::exists(result); ++i) {
+				result = nameStart + u" (%1)"_q.arg(i + 2) + extension;
+			}
+			return result;
+		}();
+		_owner->save(origin, finalName, loadFromCloud, true);
+		return;
+	}
+#endif
+	if (!toCache && !Core::App().canSaveFileWithoutAskingForPath()) {
+		return;
+	}
+	const auto filename = toCache
+		? QString()
+		: DocumentFileNameForSave(_owner);
 	_owner->save(
 		origin,
 		filename,

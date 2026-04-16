@@ -186,6 +186,26 @@ QString DefaultDownloadPath(not_null<Main::Session*> session) {
 #endif
 }
 
+QString AyuMediaPath(not_null<Main::Session*> session, AyuMediaType type) {
+#ifdef Q_OS_LINUX
+	const auto base = QStandardPaths::writableLocation(
+		QStandardPaths::DownloadLocation)
+		+ u"/ayugram/"_q;
+	QString sub;
+	switch (type) {
+	case AyuMediaType::Photo:    sub = u"photos/"_q; break;
+	case AyuMediaType::Video:    sub = u"videos/"_q; break;
+	case AyuMediaType::Audio:    sub = u"audio/"_q; break;
+	case AyuMediaType::Document: sub = u"documents/"_q; break;
+	}
+	const auto path = base + sub;
+	QDir().mkpath(path);
+	return path;
+#else
+	return DefaultDownloadPath(session);
+#endif
+}
+
 namespace internal {
 
 void UnsafeOpenUrlDefault(const QString &url) {

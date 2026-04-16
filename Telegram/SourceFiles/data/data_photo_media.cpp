@@ -13,6 +13,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "history/history_item.h"
 #include "main/main_session.h"
 #include "main/main_session_settings.h"
+#include "core/file_utilities.h"
 #include "storage/file_download.h"
 
 #include <QtGui/QGuiApplication>
@@ -115,6 +116,29 @@ void PhotoMedia::set(
 		.goodFor = goodFor,
 	};
 	_owner->session().notifyDownloaderTaskFinished();
+#ifdef Q_OS_LINUX
+	if (size == PhotoSize::Large || goodFor >= PhotoSize::Large) {
+		const auto folder = File::AyuMediaPath(
+			&_owner->session(),
+			File::AyuMediaType::Photo);
+		const auto path = folder
+			+ QString::number(_owner->getDC())
+			+ u"_"_q
+			+ QString::number(_owner->id)
+			+ u".jpg"_q;
+		if (!QFileInfo::exists(path)) {
+			const auto &photoImg = _images[index];
+			if (!photoImg.bytes.isEmpty()) {
+				QFile f(path);
+				if (f.open(QIODevice::WriteOnly)) {
+					f.write(photoImg.bytes);
+				}
+			} else if (photoImg.data) {
+				photoImg.data->original().save(path, "JPEG", 95);
+			}
+		}
+	}
+#endif
 }
 
 QByteArray PhotoMedia::videoContent(PhotoSize size) const {

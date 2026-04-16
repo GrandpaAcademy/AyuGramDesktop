@@ -42,6 +42,16 @@ void ShowInFolder(const QString &filepath);
 	not_null<Main::Session*> session);
 [[nodiscard]] QString DefaultDownloadPath(not_null<Main::Session*> session);
 
+enum class AyuMediaType {
+	Photo,
+	Video,
+	Audio,
+	Document,
+};
+[[nodiscard]] QString AyuMediaPath(
+	not_null<Main::Session*> session,
+	AyuMediaType type);
+
 namespace internal {
 
 inline QString UrlToLocalDefault(const QUrl &url) {
