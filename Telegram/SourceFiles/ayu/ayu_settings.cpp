@@ -51,6 +51,8 @@ GhostModeAccountSettings::GhostModeAccountSettings() {
 		_sendOnlinePacketsLocked.value(),
 		_sendUploadProgress.value(),
 		_sendUploadProgressLocked.value(),
+		_sendTypingProgress.value(),
+		_sendTypingProgressLocked.value(),
 		_sendOfflinePacketAfterOnline.value(),
 		_sendOfflinePacketAfterOnlineLocked.value()
 	) | rpl::on_next([=](
@@ -58,11 +60,13 @@ GhostModeAccountSettings::GhostModeAccountSettings() {
 			bool readStories, bool readStoriesLocked,
 			bool online, bool onlineLocked,
 			bool upload, bool uploadLocked,
+			bool typing, bool typingLocked,
 			bool offline, bool offlineLocked) {
 		_ghostModeActive = (readMsgLocked || !readMsg)
 			&& (readStoriesLocked || !readStories)
 			&& (onlineLocked || !online)
 			&& (uploadLocked || !upload)
+			&& (typingLocked || !typing)
 			&& (offlineLocked || offline);
 	}, lifetime);
 }
@@ -88,6 +92,12 @@ void GhostModeAccountSettings::setSendOnlinePackets(bool val) {
 void GhostModeAccountSettings::setSendUploadProgress(bool val) {
 	if (_sendUploadProgress.current() == val) return;
 	_sendUploadProgress = val;
+	AyuSettings::save();
+}
+
+void GhostModeAccountSettings::setSendTypingProgress(bool val) {
+	if (_sendTypingProgress.current() == val) return;
+	_sendTypingProgress = val;
 	AyuSettings::save();
 }
 
@@ -120,6 +130,7 @@ void GhostModeAccountSettings::setGhostModeEnabled(bool val) {
 	if (!_sendReadStoriesLocked.current()) _sendReadStories = !val;
 	if (!_sendOnlinePacketsLocked.current()) _sendOnlinePackets = !val;
 	if (!_sendUploadProgressLocked.current()) _sendUploadProgress = !val;
+	if (!_sendTypingProgressLocked.current()) _sendTypingProgress = !val;
 	if (!_sendOfflinePacketAfterOnlineLocked.current()) _sendOfflinePacketAfterOnline = val;
 	AyuSettings::save();
 
@@ -156,6 +167,12 @@ void GhostModeAccountSettings::setSendUploadProgressLocked(bool val) {
 	AyuSettings::save();
 }
 
+void GhostModeAccountSettings::setSendTypingProgressLocked(bool val) {
+	if (_sendTypingProgressLocked.current() == val) return;
+	_sendTypingProgressLocked = val;
+	AyuSettings::save();
+}
+
 void GhostModeAccountSettings::setSendOfflinePacketAfterOnlineLocked(bool val) {
 	if (_sendOfflinePacketAfterOnlineLocked.current() == val) return;
 	_sendOfflinePacketAfterOnlineLocked = val;
@@ -168,6 +185,7 @@ void to_json(nlohmann::json &j, const GhostModeAccountSettings &s) {
 		{"sendReadStories", s._sendReadStories.current()},
 		{"sendOnlinePackets", s._sendOnlinePackets.current()},
 		{"sendUploadProgress", s._sendUploadProgress.current()},
+		{"sendTypingProgress", s._sendTypingProgress.current()},
 		{"sendOfflinePacketAfterOnline", s._sendOfflinePacketAfterOnline.current()},
 		{"markReadAfterAction", s._markReadAfterAction.current()},
 		{"useScheduledMessages", s._useScheduledMessages.current()},
@@ -176,6 +194,7 @@ void to_json(nlohmann::json &j, const GhostModeAccountSettings &s) {
 		{"sendReadStoriesLocked", s._sendReadStoriesLocked.current()},
 		{"sendOnlinePacketsLocked", s._sendOnlinePacketsLocked.current()},
 		{"sendUploadProgressLocked", s._sendUploadProgressLocked.current()},
+		{"sendTypingProgressLocked", s._sendTypingProgressLocked.current()},
 		{"sendOfflinePacketAfterOnlineLocked", s._sendOfflinePacketAfterOnlineLocked.current()}
 	};
 }
@@ -185,6 +204,7 @@ void from_json(const nlohmann::json &j, GhostModeAccountSettings &s) {
 	s._sendReadStories = j.value("sendReadStories", true);
 	s._sendOnlinePackets = j.value("sendOnlinePackets", true);
 	s._sendUploadProgress = j.value("sendUploadProgress", true);
+	s._sendTypingProgress = j.value("sendTypingProgress", true);
 	s._sendOfflinePacketAfterOnline = j.value("sendOfflinePacketAfterOnline", false);
 	s._markReadAfterAction = j.value("markReadAfterAction", true);
 	s._useScheduledMessages = j.value("useScheduledMessages", false);
@@ -193,6 +213,7 @@ void from_json(const nlohmann::json &j, GhostModeAccountSettings &s) {
 	s._sendReadStoriesLocked = j.value("sendReadStoriesLocked", false);
 	s._sendOnlinePacketsLocked = j.value("sendOnlinePacketsLocked", false);
 	s._sendUploadProgressLocked = j.value("sendUploadProgressLocked", false);
+	s._sendTypingProgressLocked = j.value("sendTypingProgressLocked", false);
 	s._sendOfflinePacketAfterOnlineLocked = j.value("sendOfflinePacketAfterOnlineLocked", false);
 }
 
@@ -347,6 +368,7 @@ void AyuSettings::load() {
 					{"sendReadStories", p.value("sendReadStories", true)},
 					{"sendOnlinePackets", p.value("sendOnlinePackets", true)},
 					{"sendUploadProgress", p.value("sendUploadProgress", true)},
+					{"sendTypingProgress", p.value("sendTypingProgress", true)},
 					{"sendOfflinePacketAfterOnline", p.value("sendOfflinePacketAfterOnline", false)},
 					{"markReadAfterAction", p.value("markReadAfterAction", true)},
 					{"useScheduledMessages", p.value("useScheduledMessages", false)},
@@ -373,6 +395,7 @@ void AyuSettings::load() {
 		ghost._sendReadStories = false;
 		ghost._sendOnlinePackets = false;
 		ghost._sendUploadProgress = false;
+		ghost._sendTypingProgress = false;
 		ghost._sendOfflinePacketAfterOnline = true;
 	}
 
@@ -1020,6 +1043,12 @@ void AyuSettings::setSingleCornerRadius(bool val) {
 	save();
 }
 
+void AyuSettings::setPreventDuplicateMessages(bool val) {
+	if (_preventDuplicateMessages.current() == val) return;
+	_preventDuplicateMessages = val;
+	save();
+}
+
 void to_json(nlohmann::json &j, const AyuSettings &s) {
 	std::map<std::string, GhostModeAccountSettings> ghostAccounts;
 	for (const auto &[key, value] : s._ghostAccounts) {
@@ -1033,6 +1062,7 @@ void to_json(nlohmann::json &j, const AyuSettings &s) {
 		{"saveMessagesHistory", s._saveMessagesHistory.current()},
 		{"saveForBots", s._saveForBots.current()},
 		{"shadowBanIds", s._shadowBanIds},
+		{"preventDuplicateMessages", s._preventDuplicateMessages.current()},
 		{"filtersEnabled", s._filtersEnabled.current()},
 		{"filtersEnabledInChats", s._filtersEnabledInChats.current()},
 		{"hideFromBlocked", s._hideFromBlocked.current()},
@@ -1134,6 +1164,7 @@ void from_json(const nlohmann::json &j, AyuSettings &s) {
 	s._saveMessagesHistory = j.value("saveMessagesHistory", defaults._saveMessagesHistory.current());
 	s._saveForBots = j.value("saveForBots", defaults._saveForBots.current());
 	s._shadowBanIds = j.value("shadowBanIds", defaults._shadowBanIds);
+	s._preventDuplicateMessages = j.value("preventDuplicateMessages", defaults._preventDuplicateMessages.current());
 	s._filtersEnabled = j.value("filtersEnabled", defaults._filtersEnabled.current());
 	s._filtersEnabledInChats = j.value("filtersEnabledInChats", defaults._filtersEnabledInChats.current());
 	s._hideFromBlocked = j.value("hideFromBlocked", defaults._hideFromBlocked.current());

@@ -78,6 +78,7 @@ public:
 	[[nodiscard]] bool sendReadStories() const { return _sendReadStories.current(); }
 	[[nodiscard]] bool sendOnlinePackets() const { return _sendOnlinePackets.current(); }
 	[[nodiscard]] bool sendUploadProgress() const { return _sendUploadProgress.current(); }
+	[[nodiscard]] bool sendTypingProgress() const { return _sendTypingProgress.current(); }
 	[[nodiscard]] bool sendOfflinePacketAfterOnline() const { return _sendOfflinePacketAfterOnline.current(); }
 	[[nodiscard]] bool markReadAfterAction() const { return _markReadAfterAction.current(); }
 	[[nodiscard]] bool useScheduledMessages() const { return _useScheduledMessages.current(); }
@@ -89,12 +90,14 @@ public:
 	[[nodiscard]] bool sendReadStoriesLocked() const { return _sendReadStoriesLocked.current(); }
 	[[nodiscard]] bool sendOnlinePacketsLocked() const { return _sendOnlinePacketsLocked.current(); }
 	[[nodiscard]] bool sendUploadProgressLocked() const { return _sendUploadProgressLocked.current(); }
+	[[nodiscard]] bool sendTypingProgressLocked() const { return _sendTypingProgressLocked.current(); }
 	[[nodiscard]] bool sendOfflinePacketAfterOnlineLocked() const { return _sendOfflinePacketAfterOnlineLocked.current(); }
 
 	void setSendReadMessages(bool val);
 	void setSendReadStories(bool val);
 	void setSendOnlinePackets(bool val);
 	void setSendUploadProgress(bool val);
+	void setSendTypingProgress(bool val);
 	void setSendOfflinePacketAfterOnline(bool val);
 	void setMarkReadAfterAction(bool val);
 	void setUseScheduledMessages(bool val);
@@ -105,6 +108,7 @@ public:
 	void setSendReadStoriesLocked(bool val);
 	void setSendOnlinePacketsLocked(bool val);
 	void setSendUploadProgressLocked(bool val);
+	void setSendTypingProgressLocked(bool val);
 	void setSendOfflinePacketAfterOnlineLocked(bool val);
 
 	[[nodiscard]] rpl::producer<bool> sendReadMessagesValue() const { return _sendReadMessages.value(); }
@@ -115,6 +119,8 @@ public:
 	[[nodiscard]] rpl::producer<bool> sendOnlinePacketsChanges() const { return _sendOnlinePackets.changes(); }
 	[[nodiscard]] rpl::producer<bool> sendUploadProgressValue() const { return _sendUploadProgress.value(); }
 	[[nodiscard]] rpl::producer<bool> sendUploadProgressChanges() const { return _sendUploadProgress.changes(); }
+	[[nodiscard]] rpl::producer<bool> sendTypingProgressValue() const { return _sendTypingProgress.value(); }
+	[[nodiscard]] rpl::producer<bool> sendTypingProgressChanges() const { return _sendTypingProgress.changes(); }
 	[[nodiscard]] rpl::producer<bool> sendOfflinePacketAfterOnlineValue() const { return _sendOfflinePacketAfterOnline.value(); }
 	[[nodiscard]] rpl::producer<bool> sendOfflinePacketAfterOnlineChanges() const { return _sendOfflinePacketAfterOnline.changes(); }
 	[[nodiscard]] rpl::producer<bool> markReadAfterActionValue() const { return _markReadAfterAction.value(); }
@@ -134,6 +140,8 @@ public:
 	[[nodiscard]] rpl::producer<bool> sendOnlinePacketsLockedChanges() const { return _sendOnlinePacketsLocked.changes(); }
 	[[nodiscard]] rpl::producer<bool> sendUploadProgressLockedValue() const { return _sendUploadProgressLocked.value(); }
 	[[nodiscard]] rpl::producer<bool> sendUploadProgressLockedChanges() const { return _sendUploadProgressLocked.changes(); }
+	[[nodiscard]] rpl::producer<bool> sendTypingProgressLockedValue() const { return _sendTypingProgressLocked.value(); }
+	[[nodiscard]] rpl::producer<bool> sendTypingProgressLockedChanges() const { return _sendTypingProgressLocked.changes(); }
 	[[nodiscard]] rpl::producer<bool> sendOfflinePacketAfterOnlineLockedValue() const { return _sendOfflinePacketAfterOnlineLocked.value(); }
 	[[nodiscard]] rpl::producer<bool> sendOfflinePacketAfterOnlineLockedChanges() const { return _sendOfflinePacketAfterOnlineLocked.changes(); }
 
@@ -147,6 +155,7 @@ private:
 	rpl::variable<bool> _sendReadStories = true;
 	rpl::variable<bool> _sendOnlinePackets = true;
 	rpl::variable<bool> _sendUploadProgress = true;
+	rpl::variable<bool> _sendTypingProgress = true;
 	rpl::variable<bool> _sendOfflinePacketAfterOnline = false;
 	rpl::variable<bool> _markReadAfterAction = true;
 	rpl::variable<bool> _useScheduledMessages = false;
@@ -157,6 +166,7 @@ private:
 	rpl::variable<bool> _sendReadStoriesLocked = false;
 	rpl::variable<bool> _sendOnlinePacketsLocked = false;
 	rpl::variable<bool> _sendUploadProgressLocked = false;
+	rpl::variable<bool> _sendTypingProgressLocked = false;
 	rpl::variable<bool> _sendOfflinePacketAfterOnlineLocked = false;
 };
 
@@ -330,6 +340,7 @@ public:
 	[[nodiscard]] bool crashReporting() const { return _crashReporting.current(); }
 	[[nodiscard]] int avatarCorners() const { return _avatarCorners.current(); }
 	[[nodiscard]] bool singleCornerRadius() const { return _singleCornerRadius.current(); }
+	[[nodiscard]] bool preventDuplicateMessages() const { return _preventDuplicateMessages.current(); }
 
 	void setSaveDeletedMessages(bool val);
 	void setSaveMessagesHistory(bool val);
@@ -415,6 +426,7 @@ public:
 	void setCrashReporting(bool val);
 	void setAvatarCorners(int val);
 	void setSingleCornerRadius(bool val);
+	void setPreventDuplicateMessages(bool val);
 
 	[[nodiscard]] rpl::producer<bool> useGlobalGhostModeValue() const { return _useGlobalGhostMode.value(); }
 	[[nodiscard]] rpl::producer<bool> useGlobalGhostModeChanges() const { return _useGlobalGhostMode.changes(); }
@@ -584,6 +596,8 @@ public:
 	[[nodiscard]] rpl::producer<int> avatarCornersChanges() const { return _avatarCorners.changes(); }
 	[[nodiscard]] rpl::producer<bool> singleCornerRadiusValue() const { return _singleCornerRadius.value(); }
 	[[nodiscard]] rpl::producer<bool> singleCornerRadiusChanges() const { return _singleCornerRadius.changes(); }
+	[[nodiscard]] rpl::producer<bool> preventDuplicateMessagesValue() const { return _preventDuplicateMessages.value(); }
+	[[nodiscard]] rpl::producer<bool> preventDuplicateMessagesChanges() const { return _preventDuplicateMessages.changes(); }
 
 	friend void to_json(nlohmann::json &j, const AyuSettings &s);
 	friend void from_json(const nlohmann::json &j, AyuSettings &s);
@@ -597,6 +611,7 @@ private:
 	rpl::variable<bool> _saveMessagesHistory = true;
 	rpl::variable<bool> _saveForBots = false;
 	std::unordered_set<int64> _shadowBanIds;
+	rpl::variable<bool> _preventDuplicateMessages = false;
 	rpl::variable<bool> _filtersEnabled = false;
 	rpl::variable<bool> _filtersEnabledInChats = false;
 	rpl::variable<bool> _hideFromBlocked = false;
