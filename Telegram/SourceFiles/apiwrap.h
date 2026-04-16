@@ -9,6 +9,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 
 #include "api/api_common.h"
 #include "base/timer.h"
+#include "base/weak_ptr.h"
 #include "mtproto/sender.h"
 #include "data/stickers/data_stickers_set.h"
 #include "data/data_messages.h"
@@ -136,7 +137,7 @@ QString RequestKey(Types &&...values) {
 
 } // namespace Api
 
-class ApiWrap final : public MTP::Sender {
+class ApiWrap final : public MTP::Sender, public base::has_weak_ptr {
 public:
 	using SendAction = Api::SendAction;
 	using MessageToSend = Api::MessageToSend;
@@ -815,6 +816,6 @@ private:
 	base::flat_map<FullMsgId, QString> _unlikelyMessageLinks;
 	base::flat_map<FullStoryId, QString> _unlikelyStoryLinks;
 
-	base::weak_ptr_factory<ApiWrap> _weakFactory{ this };
+ private:
 
 };
