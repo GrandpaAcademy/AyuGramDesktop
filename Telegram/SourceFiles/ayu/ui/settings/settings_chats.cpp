@@ -358,6 +358,15 @@ void BuildContextMenuElements(SectionBuilder &builder, AyuSectionBuilder &ayu) {
 		.setter = [](int i) { AyuSettings::getInstance().setShowRepeatMessageInContextMenu(static_cast<ContextMenuVisibility>(i)); },
 		.icon = { &st::ayuRepeatMenuIcon },
 	});
+	ayu.addChooseButton({
+		.id = u"ayu/showStealthForwardInContextMenu"_q,
+		.title = tr::ayu_StealthForward(),
+		.boxTitle = tr::ayu_SettingsContextMenuTitle(),
+		.initialSelection = static_cast<int>(settings->showStealthForwardInContextMenu()),
+		.options = options,
+		.setter = [](int i) { AyuSettings::getInstance().setShowStealthForwardInContextMenu(static_cast<ContextMenuVisibility>(i)); },
+		.icon = { &st::menuIconStealth },
+	});
 	if (settings->filtersEnabled()) {
 		ayu.addChooseButton({
 			.id = u"ayu/showAddFilterInContextMenu"_q,

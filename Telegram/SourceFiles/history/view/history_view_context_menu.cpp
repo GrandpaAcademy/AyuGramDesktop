@@ -1061,6 +1061,7 @@ void AddMessageActions(
 		AyuUi::AddHideMessageAction(menu, request.item);
 		AyuUi::AddUserMessagesAction(menu, request.item);
 		AyuUi::AddRepeatMessageAction(menu, request.item, context);
+		AyuUi::AddStealthForwardAction(menu, request.item, list->controller());
 		AyuUi::AddMessageDetailsAction(menu, request.item);
 	}
 

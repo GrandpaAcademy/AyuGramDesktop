@@ -747,6 +747,12 @@ void AyuSettings::setShowAddFilterInContextMenu(ContextMenuVisibility val) {
 	save();
 }
 
+void AyuSettings::setShowStealthForwardInContextMenu(ContextMenuVisibility val) {
+	if (_showStealthForwardInContextMenu.current() == val) return;
+	_showStealthForwardInContextMenu = val;
+	save();
+}
+
 void AyuSettings::setShowAttachButtonInMessageField(bool val) {
 	if (_showAttachButtonInMessageField.current() == val) return;
 	_showAttachButtonInMessageField = val;
@@ -1064,6 +1070,7 @@ void to_json(nlohmann::json &j, const AyuSettings &s) {
 		{"showMessageDetailsInContextMenu", s._showMessageDetailsInContextMenu.current()},
 		{"showRepeatMessageInContextMenu", s._showRepeatMessageInContextMenu.current()},
 		{"showAddFilterInContextMenu", s._showAddFilterInContextMenu.current()},
+		{"showStealthForwardInContextMenu", s._showStealthForwardInContextMenu.current()},
 		{"showAttachButtonInMessageField", s._showAttachButtonInMessageField.current()},
 		{"showCommandsButtonInMessageField", s._showCommandsButtonInMessageField.current()},
 		{"showEmojiButtonInMessageField", s._showEmojiButtonInMessageField.current()},
@@ -1164,6 +1171,7 @@ void from_json(const nlohmann::json &j, AyuSettings &s) {
 	s._showMessageDetailsInContextMenu = j.value("showMessageDetailsInContextMenu", defaults._showMessageDetailsInContextMenu.current());
 	s._showRepeatMessageInContextMenu = j.value("showRepeatMessageInContextMenu", defaults._showRepeatMessageInContextMenu.current());
 	s._showAddFilterInContextMenu = j.value("showAddFilterInContextMenu", defaults._showAddFilterInContextMenu.current());
+	s._showStealthForwardInContextMenu = j.value("showStealthForwardInContextMenu", defaults._showStealthForwardInContextMenu.current());
 	s._showAttachButtonInMessageField = j.value("showAttachButtonInMessageField", defaults._showAttachButtonInMessageField.current());
 	s._showCommandsButtonInMessageField = j.value("showCommandsButtonInMessageField", defaults._showCommandsButtonInMessageField.current());
 	s._showEmojiButtonInMessageField = j.value("showEmojiButtonInMessageField", defaults._showEmojiButtonInMessageField.current());

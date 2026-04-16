@@ -865,4 +865,49 @@ void AddCreateFilterAction(not_null<Ui::PopupMenu*> menu,
 		&st::menuIconAddToFolder);
 }
 
+void AddStealthForwardAction(not_null<Ui::PopupMenu*> menu, HistoryItem *item, not_null<Window::SessionController*> controller) {
+	const auto &settings = AyuSettings::getInstance();
+	if (!needToShowItem(settings.showStealthForwardInContextMenu())) {
+		return;
+	}
+
+	if (!item || !item->isHistoryEntry() || item->isService() || item->isLocal() || !item->allowsForward() || item->id <= 0) {
+		return;
+	}
+
+	const auto history = item->history();
+	const auto session = &history->session();
+	const auto itemId = item->fullId();
+
+	menu->addAction(
+		tr::ayu_StealthForward(tr::now),
+		[=]
+		{
+			const auto currentItem = history->owner().message(itemId);
+			if (!currentItem) {
+				return;
+			}
+
+			const auto sendAs = nullptr;
+			auto action = Api::SendAction(
+				history,
+				Api::SendOptions{ .sendAs = sendAs });
+			action.clearDraft = false;
+
+			applyGhostScheduling(session, action.options);
+
+			const auto forwardDraft = Data::ForwardDraft{
+				.ids = MessageIdsList{ itemId },
+				.options = Data::ForwardOptions::NoNamesAndCaptions,
+			};
+			auto resolvedDraft = history->resolveForwardDraft(forwardDraft);
+
+			crl::async([=]
+			{
+				AyuForward::stealthForwardMessages(session, action, resolvedDraft);
+			});
+		},
+		&st::menuIconStealth);
+}
+
 } // namespace AyuUi
