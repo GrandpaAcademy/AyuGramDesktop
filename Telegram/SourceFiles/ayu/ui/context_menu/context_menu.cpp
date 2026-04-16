@@ -871,7 +871,10 @@ void AddStealthForwardAction(not_null<Ui::PopupMenu*> menu, HistoryItem *item, n
 		return;
 	}
 
-	if (!item || !item->isHistoryEntry() || item->isService() || item->isLocal() || !item->allowsForward() || item->id <= 0) {
+	if (!item || !item->isHistoryEntry() || item->isService() || item->isLocal() || item->id <= 0) {
+		return;
+	}
+	if (!item->media() && item->originalText().text.isEmpty()) {
 		return;
 	}
 
