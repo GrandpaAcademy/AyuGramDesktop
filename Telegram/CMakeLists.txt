@@ -2522,3 +2522,22 @@ if (LINUX AND DESKTOP_APP_USE_PACKAGED)
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/com.ayugram.desktop.service" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/dbus-1/services")
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/com.ayugram.desktop.metainfo.xml" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/metainfo")
 endif()
+
+if (LINUX)
+    if (TARGET external_qt_static_plugins_hime_im_client)
+        target_link_libraries(external_qt_static_plugins_hime_im_client
+        PUBLIC
+            desktop-app::lib_base
+        )
+    endif()
+
+    if (TARGET external_qt)
+        target_link_libraries(external_qt
+        INTERFACE
+            brotlidec
+            brotlienc
+            brotlicommon
+        )
+    endif()
+endif()
+
