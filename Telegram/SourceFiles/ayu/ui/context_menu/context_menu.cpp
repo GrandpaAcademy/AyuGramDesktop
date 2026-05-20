@@ -950,16 +950,37 @@ void AddCreateFilterAction(not_null<Ui::PopupMenu*> menu,
 
 void AddStealthForwardAction(not_null<Ui::PopupMenu*> menu, HistoryItem *item, not_null<Window::SessionController*> controller) {
 	const auto &settings = AyuSettings::getInstance();
+	LOG(("AyuGram: AddStealthForwardAction called, showStealthForwardInContextMenu: %1").arg(static_cast<int>(settings.showStealthForwardInContextMenu())));
 	if (!needToShowItem(settings.showStealthForwardInContextMenu())) {
+		LOG(("AyuGram: AddStealthForwardAction returned early because of needToShowItem"));
 		return;
 	}
 
-	if (!item || !item->isHistoryEntry() || item->isService() || item->isLocal() || item->id <= 0) {
+	if (!item) {
+		LOG(("AyuGram: AddStealthForwardAction item is null"));
+		return;
+	}
+	if (!item->isHistoryEntry()) {
+		LOG(("AyuGram: AddStealthForwardAction item is not history entry"));
+		return;
+	}
+	if (item->isService()) {
+		LOG(("AyuGram: AddStealthForwardAction item is service"));
+		return;
+	}
+	if (item->isLocal()) {
+		LOG(("AyuGram: AddStealthForwardAction item is local"));
+		return;
+	}
+	if (item->id <= 0) {
+		LOG(("AyuGram: AddStealthForwardAction item id <= 0"));
 		return;
 	}
 	if (!item->media() && item->originalText().text.isEmpty()) {
+		LOG(("AyuGram: AddStealthForwardAction item has no media and text is empty"));
 		return;
 	}
+	LOG(("AyuGram: AddStealthForwardAction adding menu action!"));
 
 	const auto history = item->history();
 	const auto session = &history->session();
