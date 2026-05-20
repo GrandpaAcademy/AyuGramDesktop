@@ -176,6 +176,7 @@ private:
 
 	void confirmDeleteSelected();
 	void confirmForwardSelected();
+	void confirmStealthForwardSelected();
 	void clearSelected();
 	void recountChatWidth();
 

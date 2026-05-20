@@ -335,6 +335,10 @@ ChatWidget::ChatWidget(
 	) | rpl::on_next([=] {
 		confirmForwardSelected();
 	}, _topBar->lifetime());
+	_topBar->stealthForwardSelectionRequest(
+	) | rpl::on_next([=] {
+		confirmStealthForwardSelected();
+	}, _topBar->lifetime());
 	_topBar->clearSelectionRequest(
 	) | rpl::on_next([=] {
 		clearSelected();
@@ -3424,6 +3428,10 @@ void ChatWidget::confirmDeleteSelected() {
 
 void ChatWidget::confirmForwardSelected() {
 	ConfirmForwardSelectedItems(_inner);
+}
+
+void ChatWidget::confirmStealthForwardSelected() {
+	ConfirmStealthForwardSelectedItems(_inner);
 }
 
 void ChatWidget::clearSelected() {

@@ -167,6 +167,10 @@ PinnedWidget::PinnedWidget(
 	) | rpl::on_next([=] {
 		confirmForwardSelected();
 	}, _topBar->lifetime());
+	_topBar->stealthForwardSelectionRequest(
+	) | rpl::on_next([=] {
+		confirmStealthForwardSelected();
+	}, _topBar->lifetime());
 	_topBar->clearSelectionRequest(
 	) | rpl::on_next([=] {
 		clearSelected();
@@ -834,6 +838,10 @@ void PinnedWidget::confirmDeleteSelected() {
 
 void PinnedWidget::confirmForwardSelected() {
 	ConfirmForwardSelectedItems(_inner);
+}
+
+void PinnedWidget::confirmStealthForwardSelected() {
+	ConfirmStealthForwardSelectedItems(_inner);
 }
 
 void PinnedWidget::clearSelected() {
