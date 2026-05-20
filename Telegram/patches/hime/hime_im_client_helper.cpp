@@ -46,29 +46,31 @@ void (*hime_im_client_set_client_window)(
 	const Window win);
 void (*hime_im_client_set_window)(HIME_client_handle *handle, Window win);
 
+template <typename Function>
+inline bool LoadSymbol(void *lib, const char *name, Function &func) {
+	func = reinterpret_cast<Function>(dlsym(lib, name));
+	return (func != nullptr);
+}
+
 bool Resolve() {
 	static const auto loaded = [&] {
 		void *lib = dlopen("libhime-im-client.so.1", RTLD_LAZY | RTLD_NODELETE);
 		if (!lib) {
 			return false;
 		}
-		auto load_sym = [&](auto &func, const char *name) {
-			func = reinterpret_cast<decltype(func)>(dlsym(lib, name));
-			return func != nullptr;
-		};
-		return load_sym(hime_im_client_close, "hime_im_client_close")
-			&& load_sym(hime_im_client_focus_in, "hime_im_client_focus_in")
-			&& load_sym(hime_im_client_focus_out, "hime_im_client_focus_out")
-			&& load_sym(hime_im_client_focus_out2, "hime_im_client_focus_out2")
-			&& load_sym(hime_im_client_forward_key_press, "hime_im_client_forward_key_press")
-			&& load_sym(hime_im_client_forward_key_release, "hime_im_client_forward_key_release")
-			&& load_sym(hime_im_client_get_preedit, "hime_im_client_get_preedit")
-			&& load_sym(hime_im_client_open, "hime_im_client_open")
-			&& load_sym(hime_im_client_reset, "hime_im_client_reset")
-			&& load_sym(hime_im_client_set_cursor_location, "hime_im_client_set_cursor_location")
-			&& load_sym(hime_im_client_set_flags, "hime_im_client_set_flags")
-			&& (load_sym(hime_im_client_set_client_window, "hime_im_client_set_client_window")
-				|| load_sym(hime_im_client_set_window, "hime_im_client_set_window"));
+		return LoadSymbol(lib, "hime_im_client_close", hime_im_client_close)
+			&& LoadSymbol(lib, "hime_im_client_focus_in", hime_im_client_focus_in)
+			&& LoadSymbol(lib, "hime_im_client_focus_out", hime_im_client_focus_out)
+			&& LoadSymbol(lib, "hime_im_client_focus_out2", hime_im_client_focus_out2)
+			&& LoadSymbol(lib, "hime_im_client_forward_key_press", hime_im_client_forward_key_press)
+			&& LoadSymbol(lib, "hime_im_client_forward_key_release", hime_im_client_forward_key_release)
+			&& LoadSymbol(lib, "hime_im_client_get_preedit", hime_im_client_get_preedit)
+			&& LoadSymbol(lib, "hime_im_client_open", hime_im_client_open)
+			&& LoadSymbol(lib, "hime_im_client_reset", hime_im_client_reset)
+			&& LoadSymbol(lib, "hime_im_client_set_cursor_location", hime_im_client_set_cursor_location)
+			&& LoadSymbol(lib, "hime_im_client_set_flags", hime_im_client_set_flags)
+			&& (LoadSymbol(lib, "hime_im_client_set_client_window", hime_im_client_set_client_window)
+				|| LoadSymbol(lib, "hime_im_client_set_window", hime_im_client_set_window));
 	}();
 	return loaded;
 }
