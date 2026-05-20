@@ -746,8 +746,10 @@ void ShareBox::submit(Api::SendOptions options) {
 		return true;
 	};
 	if (const auto onstack = _descriptor.submitCallback) {
-		const auto forwardOptions = (_forwardOptions.captionsCount
-			&& _forwardOptions.dropCaptions)
+		const auto forwardOptions = _forwardOptions.stealthForward
+			? Data::ForwardOptions::StealthForward
+			: (_forwardOptions.captionsCount
+				&& _forwardOptions.dropCaptions)
 			? Data::ForwardOptions::NoNamesAndCaptions
 			: _forwardOptions.dropNames
 			? Data::ForwardOptions::NoSenderNames
@@ -1755,7 +1757,7 @@ ShareBox::SubmitCallback ShareBox::DefaultForwardCallback(
 			}
 		};
 
-		if (stealthForward) {
+		if (stealthForward || forwardOptions == Data::ForwardOptions::StealthForward) {
 			crl::async([=]{
 				for (const auto thread : result) {
 					AyuForward::stealthForwardMessages(

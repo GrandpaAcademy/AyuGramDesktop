@@ -2906,7 +2906,9 @@ base::weak_qptr<Ui::BoxContent> ShowForwardMessagesBox(
 		}
 
 		[[nodiscard]] Data::ForwardOptions forwardOptionsData() const {
-			return (_forwardOptions.captionsCount
+			return _forwardOptions.stealthForward
+				? Data::ForwardOptions::StealthForward
+				: (_forwardOptions.captionsCount
 					&& _forwardOptions.dropCaptions)
 				? Data::ForwardOptions::NoNamesAndCaptions
 				: _forwardOptions.dropNames

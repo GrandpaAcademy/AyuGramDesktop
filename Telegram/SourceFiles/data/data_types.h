@@ -388,6 +388,7 @@ enum class ForwardOptions {
 	PreserveInfo,
 	NoSenderNames,
 	NoNamesAndCaptions,
+	StealthForward,
 };
 
 struct ForwardDraft {

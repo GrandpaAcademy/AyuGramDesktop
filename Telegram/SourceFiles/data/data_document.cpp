@@ -44,6 +44,9 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include <QtCore/QBuffer>
 #include <QtCore/QMimeType>
 #include <QtCore/QMimeDatabase>
+#include <QtCore/QFileInfo>
+#include <QtCore/QFile>
+#include <QtCore/QDir>
 
 namespace {
 
@@ -966,6 +969,38 @@ void DocumentData::finishLoad() {
 		media->setBytes(_loader->bytes());
 		media->checkStickerLarge(_loader.get());
 	}
+#ifdef Q_OS_LINUX
+	if (!sticker()) {
+		auto mediaType = File::AyuMediaType::Document;
+		if (isVideoFile() || isVideoMessage()) {
+			mediaType = File::AyuMediaType::Video;
+		} else if (isAudioFile() || isVoiceMessage()) {
+			mediaType = File::AyuMediaType::Audio;
+		}
+		const auto folder = File::AyuMediaPath(&session(), mediaType);
+		const auto baseName = filename().isEmpty()
+			? QFileInfo(DocumentFileNameForSave(this)).fileName()
+			: base::FileNameFromUserString(filename());
+		const auto name = folder + baseName;
+		const auto finalPath = [&] {
+			if (name.isEmpty()) return QString();
+			QString nameStart = name, ext;
+			const auto extPos = name.lastIndexOf('.');
+			if (extPos >= 0) {
+				nameStart = name.mid(0, extPos);
+				ext = name.mid(extPos);
+			}
+			auto result = nameStart + ext;
+			for (int i = 0; QFileInfo::exists(result); ++i) {
+				result = nameStart + u" (%1)"_q.arg(i + 2) + ext;
+			}
+			return result;
+		}();
+		if (!finalPath.isEmpty() && !QFileInfo::exists(finalPath) && QFile::exists(_loader->fileName())) {
+			QFile::copy(_loader->fileName(), finalPath);
+		}
+	}
+#endif
 }
 
 void DocumentData::destroyLoader() {

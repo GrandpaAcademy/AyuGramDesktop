@@ -43,6 +43,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "ui/vertical_list.h"
 #include "ui/ui_utility.h"
 #include "window/themes/window_theme.h"
+#include "styles/style_ayu_icons.h"
 #include "window/section_widget.h"
 #include "window/window_peer_menu.h"
 #include "window/window_session_controller.h"
@@ -1000,6 +1001,23 @@ void DraftOptionsBox(
 				state->shown.force_assign(Section::Forward);
 			});
 		}
+
+		const auto stealthForward = (now == Options::StealthForward);
+		Settings::AddButtonWithIcon(
+			bottom,
+			(stealthForward
+				? tr::lng_forward_action_show_sender
+				: tr::ayu_StealthForward)(),
+			st::settingsButton,
+			{ stealthForward
+				? &st::menuIconUserShow
+				: &st::ayuGhostIcon }
+		)->setClickedCallback([=] {
+			state->forward.options = stealthForward
+				? Options::PreserveInfo
+				: Options::StealthForward;
+			state->shown.force_assign(Section::Forward);
+		});
 
 		Settings::AddButtonWithIcon(
 			bottom,

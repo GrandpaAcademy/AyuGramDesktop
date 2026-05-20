@@ -36,6 +36,9 @@ void FillForwardOptions(
 				: tr::lng_forward_show_captions)(),
 			!options.dropCaptions).get()
 		: nullptr;
+	const auto stealth = createView(
+		tr::ayu_StealthForward(),
+		options.stealthForward);
 
 	const auto notify = [=] {
 		optionsChanged({
@@ -43,11 +46,14 @@ void FillForwardOptions(
 			.captionsCount = options.captionsCount,
 			.dropNames = !names->checked(),
 			.dropCaptions = (captions && !captions->checked()),
+			.stealthForward = stealth->checked(),
 		});
 	};
 	names->checkedChanges(
 	) | rpl::on_next([=](bool showNames) {
-		if (showNames && captions && !captions->checked()) {
+		if (showNames && stealth->checked()) {
+			stealth->setChecked(false, anim::type::normal);
+		} else if (showNames && captions && !captions->checked()) {
 			captions->setChecked(true, anim::type::normal);
 		} else {
 			notify();
@@ -63,6 +69,14 @@ void FillForwardOptions(
 			}
 		}, lifetime);
 	}
+	stealth->checkedChanges(
+	) | rpl::on_next([=](bool stealthChecked) {
+		if (stealthChecked && names->checked()) {
+			names->setChecked(false, anim::type::normal);
+		} else {
+			notify();
+		}
+	}, lifetime);
 }
 
 } // namespace Ui

@@ -21,6 +21,8 @@
 #include "main/main_session.h"
 #include "storage/file_download_mtproto.h"
 #include "storage/localimageloader.h"
+#include <QtCore/QFileInfo>
+#include <QtCore/QDir>
 
 namespace AyuSync {
 
@@ -41,12 +43,57 @@ QString filePath(not_null<Main::Session*> session, const Data::Media *media) {
 	}
 
 	if (const auto document = media->document()) {
-		if (!document->filename().isEmpty()) {
-			return pathForSave(session) + media->document()->filename();
+#ifdef Q_OS_LINUX
+		// Check AyuMediaPath folders first
+		auto mediaType = File::AyuMediaType::Document;
+		if (document->isVideoFile() || document->isVideoMessage()) {
+			mediaType = File::AyuMediaType::Video;
+		} else if (document->isAudioFile() || document->isVoiceMessage()) {
+			mediaType = File::AyuMediaType::Audio;
 		}
-		if (const auto name = document->filepath(true); !name.isEmpty()) {
+		const auto folder = File::AyuMediaPath(session, mediaType);
+		const auto baseName = document->filename().isEmpty()
+			? QFileInfo(DocumentFileNameForSave(document)).fileName()
+			: base::FileNameFromUserString(document->filename());
+		const auto ayuPath = folder + baseName;
+		if (QFileInfo::exists(ayuPath)) {
+			return ayuPath;
+		}
+		// Also check voice/round/gif/video special filenames in AyuMediaPath
+		QString specialName;
+		if (document->isVoiceMessage()) {
+			specialName = "audio_" + QString::number(document->getDC()) + "_" +
+				QString::number(document->id) + ".ogg";
+		} else if (document->isVideoMessage()) {
+			specialName = "round_" + QString::number(document->getDC()) + "_" +
+				QString::number(document->id) + ".mp4";
+		} else if (document->isGifv()) {
+			specialName = "gif_" + QString::number(document->getDC()) + "_" +
+				QString::number(document->id) + ".gif";
+		} else if (document->isVideoFile()) {
+			specialName = "video_" + QString::number(document->getDC()) + "_" +
+				QString::number(document->id) + ".mp4";
+		}
+		if (!specialName.isEmpty()) {
+			const auto ayuSpecialPath = folder + specialName;
+			if (QFileInfo::exists(ayuSpecialPath)) {
+				return ayuSpecialPath;
+			}
+		}
+#endif
+
+		if (const auto name = document->filepath(true); !name.isEmpty() && QFileInfo::exists(name)) {
 			return name;
 		}
+
+		if (!document->filename().isEmpty()) {
+			const auto standardPath = pathForSave(session) + media->document()->filename();
+			if (QFileInfo::exists(standardPath)) {
+				return standardPath;
+			}
+		}
+
+		// Fallbacks
 		if (document->isVoiceMessage()) {
 			return pathForSave(session) + "audio_" + QString::number(document->getDC()) + "_" +
 				QString::number(document->id) + ".ogg";
@@ -55,8 +102,6 @@ QString filePath(not_null<Main::Session*> session, const Data::Media *media) {
 			return pathForSave(session) + "round_" + QString::number(document->getDC()) + "_" +
 				QString::number(document->id) + ".mp4";
 		}
-
-		// media without any file name
 		if (document->isGifv()) {
 			return pathForSave(session) + "gif_" + QString::number(document->getDC()) + "_" +
 				QString::number(document->id) + ".gif";
@@ -65,7 +110,21 @@ QString filePath(not_null<Main::Session*> session, const Data::Media *media) {
 			return pathForSave(session) + "video_" + QString::number(document->getDC()) + "_" +
 				QString::number(document->id) + ".mp4";
 		}
+		if (!document->filename().isEmpty()) {
+			return pathForSave(session) + media->document()->filename();
+		}
 	} else if (const auto photo = media->photo()) {
+#ifdef Q_OS_LINUX
+		const auto folder = File::AyuMediaPath(session, File::AyuMediaType::Photo);
+		const auto ayuPath = folder
+			+ QString::number(photo->getDC())
+			+ u"_"_q
+			+ QString::number(photo->id)
+			+ u".jpg"_q;
+		if (QFileInfo::exists(ayuPath)) {
+			return ayuPath;
+		}
+#endif
 		return pathForSave(session) + QString::number(photo->getDC()) + "_" + QString::number(photo->id) + ".jpg";
 	}
 

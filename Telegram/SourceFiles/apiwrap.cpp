@@ -3485,7 +3485,13 @@ void ApiWrap::forwardMessages(
 	Expects(!draft.items.empty());
 
 	const auto fullAyuForward = AyuForward::isFullAyuForwardNeeded(draft.items.front());
-	if (fullAyuForward) {
+	const auto stealthForward = (draft.options == Data::ForwardOptions::StealthForward);
+	if (stealthForward) {
+		crl::async([=] {
+			AyuForward::stealthForwardMessages(_session, action, draft);
+		});
+		return;
+	} else if (fullAyuForward) {
 		crl::async([=] {
 			AyuForward::forwardMessages(_session, action, false, draft);
 		});

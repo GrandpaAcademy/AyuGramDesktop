@@ -901,7 +901,7 @@ void AddStealthForwardAction(not_null<Ui::PopupMenu*> menu, HistoryItem *item, n
 
 			const auto forwardDraft = Data::ForwardDraft{
 				.ids = MessageIdsList{ itemId },
-				.options = Data::ForwardOptions::NoNamesAndCaptions,
+				.options = Data::ForwardOptions::StealthForward,
 			};
 			auto resolvedDraft = history->resolveForwardDraft(forwardDraft);
 

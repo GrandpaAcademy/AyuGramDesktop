@@ -18,6 +18,7 @@ struct ForwardOptions {
 	int captionsCount = 0;
 	bool dropNames = false;
 	bool dropCaptions = false;
+	bool stealthForward = false;
 };
 
 void FillForwardOptions(

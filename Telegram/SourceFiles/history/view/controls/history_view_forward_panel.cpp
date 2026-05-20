@@ -159,7 +159,9 @@ void ForwardPanel::updateTexts() {
 				Unexpected("Corrupt forwarded information in message.");
 			}
 		}
-		if (!keepNames || HasOnlyDroppedForwardedInfo(_data.items)) {
+		if (_data.options == Data::ForwardOptions::StealthForward) {
+			from = tr::ayu_StealthForward(tr::now);
+		} else if (!keepNames || HasOnlyDroppedForwardedInfo(_data.items)) {
 			from = tr::lng_forward_sender_names_removed(tr::now);
 		} else if (names.size() > 2) {
 			from = tr::lng_forwarding_from(
@@ -262,7 +264,9 @@ void ForwardPanel::editToNextOption() {
 		? Options::NoSenderNames
 		: ((now == Options::NoSenderNames) && captionsCount)
 		? Options::NoNamesAndCaptions
-		: Options::PreserveInfo;
+		: (now == Options::StealthForward)
+		? Options::PreserveInfo
+		: Options::StealthForward;
 
 	const auto topicRootId = _to->topicRootId();
 	const auto monoforumPeerId = _to->monoforumPeerId();
