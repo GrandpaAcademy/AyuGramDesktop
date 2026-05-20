@@ -76,16 +76,16 @@ PRIVATE
     tdesktop::td_tde2e
     tdesktop::td_ui
     desktop-app::lib_webrtc
-    desktop-app::lib_base
-    desktop-app::lib_crl
-    desktop-app::lib_ui
-    desktop-app::lib_tl
+    desktop-app::lib_webview
     desktop-app::lib_spellcheck
     desktop-app::lib_storage
+    desktop-app::lib_ui
+    desktop-app::lib_translate
     desktop-app::lib_lottie
     desktop-app::lib_qr
-    desktop-app::lib_translate
-    desktop-app::lib_webview
+    desktop-app::lib_tl
+    desktop-app::lib_crl
+    desktop-app::lib_base
     desktop-app::lib_ffmpeg
     desktop-app::lib_stripe
     desktop-app::external_rlottie
