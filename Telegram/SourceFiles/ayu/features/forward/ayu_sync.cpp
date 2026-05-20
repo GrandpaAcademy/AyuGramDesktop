@@ -6,6 +6,7 @@
 // Copyright @Radolyn, 2026
 #include "ayu/features/forward/ayu_sync.h"
 
+#include "base/base_file_utilities.h"
 #include "apiwrap.h"
 #include "api/api_sending.h"
 #include "ayu/utils/telegram_helpers.h"
