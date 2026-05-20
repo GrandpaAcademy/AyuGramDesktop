@@ -79,23 +79,27 @@ bool Resolve() {
 } // namespace HimeHelper
 
 void hime_im_client_close(HIME_client_handle *handle) {
-	HimeHelper::Resolve();
-	HimeHelper::hime_im_client_close(handle);
+	if (HimeHelper::Resolve() && HimeHelper::hime_im_client_close) {
+		HimeHelper::hime_im_client_close(handle);
+	}
 }
 
 void hime_im_client_focus_in(HIME_client_handle *handle) {
-	HimeHelper::Resolve();
-	HimeHelper::hime_im_client_focus_in(handle);
+	if (HimeHelper::Resolve() && HimeHelper::hime_im_client_focus_in) {
+		HimeHelper::hime_im_client_focus_in(handle);
+	}
 }
 
 void hime_im_client_focus_out(HIME_client_handle *handle) {
-	HimeHelper::Resolve();
-	HimeHelper::hime_im_client_focus_out(handle);
+	if (HimeHelper::Resolve() && HimeHelper::hime_im_client_focus_out) {
+		HimeHelper::hime_im_client_focus_out(handle);
+	}
 }
 
 void hime_im_client_focus_out2(HIME_client_handle *handle, char **rstr) {
-	HimeHelper::Resolve();
-	HimeHelper::hime_im_client_focus_out2(handle, rstr);
+	if (HimeHelper::Resolve() && HimeHelper::hime_im_client_focus_out2) {
+		HimeHelper::hime_im_client_focus_out2(handle, rstr);
+	}
 }
 
 int hime_im_client_forward_key_press(
@@ -103,12 +107,14 @@ int hime_im_client_forward_key_press(
 	const KeySym key,
 	const uint32_t state,
 	char **rstr) {
-	HimeHelper::Resolve();
-	return HimeHelper::hime_im_client_forward_key_press(
-		handle,
-		key,
-		state,
-		rstr);
+	if (HimeHelper::Resolve() && HimeHelper::hime_im_client_forward_key_press) {
+		return HimeHelper::hime_im_client_forward_key_press(
+			handle,
+			key,
+			state,
+			rstr);
+	}
+	return 0;
 }
 
 int hime_im_client_forward_key_release(
@@ -116,12 +122,14 @@ int hime_im_client_forward_key_release(
 	const KeySym key,
 	const uint32_t state,
 	char **rstr) {
-	HimeHelper::Resolve();
-	return HimeHelper::hime_im_client_forward_key_release(
-		handle,
-		key,
-		state,
-		rstr);
+	if (HimeHelper::Resolve() && HimeHelper::hime_im_client_forward_key_release) {
+		return HimeHelper::hime_im_client_forward_key_release(
+			handle,
+			key,
+			state,
+			rstr);
+	}
+	return 0;
 }
 
 int hime_im_client_get_preedit(
@@ -130,55 +138,64 @@ int hime_im_client_get_preedit(
 	HIME_PREEDIT_ATTR att[],
 	int *cursor,
 	int *sub_comp_len) {
-	HimeHelper::Resolve();
-	return HimeHelper::hime_im_client_get_preedit(
-		handle,
-		str,
-		att,
-		cursor,
-		sub_comp_len);
+	if (HimeHelper::Resolve() && HimeHelper::hime_im_client_get_preedit) {
+		return HimeHelper::hime_im_client_get_preedit(
+			handle,
+			str,
+			att,
+			cursor,
+			sub_comp_len);
+	}
+	return 0;
 }
 
 HIME_client_handle *hime_im_client_open(Display *display) {
-	HimeHelper::Resolve();
-	return HimeHelper::hime_im_client_open(display);
+	if (HimeHelper::Resolve() && HimeHelper::hime_im_client_open) {
+		return HimeHelper::hime_im_client_open(display);
+	}
+	return nullptr;
 }
 
 void hime_im_client_reset(HIME_client_handle *handle) {
-	HimeHelper::Resolve();
-	HimeHelper::hime_im_client_reset(handle);
+	if (HimeHelper::Resolve() && HimeHelper::hime_im_client_reset) {
+		HimeHelper::hime_im_client_reset(handle);
+	}
 }
 
 void hime_im_client_set_cursor_location(
 	HIME_client_handle *handle,
 	const int x,
 	const int y) {
-	HimeHelper::Resolve();
-	HimeHelper::hime_im_client_set_cursor_location(
-		handle,
-		x,
-		y);
+	if (HimeHelper::Resolve() && HimeHelper::hime_im_client_set_cursor_location) {
+		HimeHelper::hime_im_client_set_cursor_location(
+			handle,
+			x,
+			y);
+	}
 }
 
 void hime_im_client_set_flags(
 	HIME_client_handle *handle,
 	const int flags,
 	int *ret_flags) {
-	HimeHelper::Resolve();
-	HimeHelper::hime_im_client_set_flags(
-		handle,
-		flags,
-		ret_flags);
+	if (HimeHelper::Resolve() && HimeHelper::hime_im_client_set_flags) {
+		HimeHelper::hime_im_client_set_flags(
+			handle,
+			flags,
+			ret_flags);
+	}
 }
 
 void hime_im_client_set_client_window(
 	HIME_client_handle *handle,
 	const Window win) {
-	HimeHelper::Resolve();
-	HimeHelper::hime_im_client_set_client_window(handle, win);
+	if (HimeHelper::Resolve() && HimeHelper::hime_im_client_set_client_window) {
+		HimeHelper::hime_im_client_set_client_window(handle, win);
+	}
 }
 
 void hime_im_client_set_window(HIME_client_handle *handle, Window win) {
-	HimeHelper::Resolve();
-	HimeHelper::hime_im_client_set_window(handle, win);
+	if (HimeHelper::Resolve() && HimeHelper::hime_im_client_set_window) {
+		HimeHelper::hime_im_client_set_window(handle, win);
+	}
 }
