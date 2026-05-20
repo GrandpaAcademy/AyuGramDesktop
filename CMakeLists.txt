@@ -62,5 +62,16 @@ set(desktop_app_skip_libs
     variant
 )
 
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/Telegram/patches/hime/CMakeLists.txt"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/external/qt/qt_static_plugins/hime/hime_im_client/CMakeLists.txt"
+    COPYONLY
+)
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/Telegram/patches/hime/hime_im_client_helper.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/external/qt/qt_static_plugins/hime/hime_im_client/hime_im_client_helper.cpp"
+    COPYONLY
+)
+
 add_subdirectory(cmake)
 add_subdirectory(Telegram)

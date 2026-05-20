@@ -2524,12 +2524,6 @@ if (LINUX AND DESKTOP_APP_USE_PACKAGED)
 endif()
 
 if (LINUX)
-    if (TARGET external_qt_static_plugins_hime_im_client)
-        target_link_libraries(external_qt_static_plugins_hime_im_client
-        PUBLIC
-            desktop-app::lib_base
-        )
-    endif()
 
     if (TARGET external_qt)
         target_link_libraries(external_qt
