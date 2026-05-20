@@ -110,6 +110,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "ayu/ayu_settings.h"
 #include "ayu/features/forward/ayu_forward.h"
 #include "ayu/ui/context_menu/context_menu.h"
+#include "ayu/utils/ayu_text_format.h"
 
 
 namespace HistoryView {
